@@ -2,22 +2,42 @@ const buttons = document.getElementsByClassName('button');
 
 let curr = '';
 let total = 0;
-currentOp = '';
+prevOp = '';
 const operations = ['+', '-', 'x', '/']
 
 const textBox = document.querySelector('.text');
 textBox.innerHTML = total;
 
 function handleAdd() {
+    if (prevOp == '-') { // finish previous operation
+        handleSub();
+        curr = '0';
+    } else if (prevOp == '*') {
+        handleMult();
+        curr = '0';
+    } else if (prevOp == '/') {
+        handleDiv();
+        curr = '0';
+    }
     newTotal = total + parseInt(curr);
     total = newTotal;
     curr = '';
-    currentOp = '+';
+    prevOp = '+';
     textBox.innerHTML = total;
-    console.log(newTotal);
+    console.log('total: ' + String(total));
 }
 
 function handleSub() {
+    if (prevOp == '+') { // finish previous operation
+        handleAdd();
+        curr = '0';
+    } else if (prevOp == '*') {
+        handleMult();
+        curr = '0';
+    } else if (prevOp == '/') {
+        handleDiv();
+        curr = '0';
+    }
     if (total != 0) {
         newTotal = total - parseInt(curr);
     } else {
@@ -25,13 +45,23 @@ function handleSub() {
     }
     total = newTotal;
     curr = '';
-    currentOp = '-';
+    prevOp = '-';
     textBox.innerHTML = total;
-    console.log(newTotal);
+    console.log('total: ' + String(total));
 }
 
 function handleDiv() {
-    if (currentOp == 'AC') {
+    if (prevOp == '+') { // finish previous operation
+        handleAdd();
+        curr = '1';
+    } else if (prevOp == '-') {
+        handleSub();
+        curr = '1';
+    } else if (prevOp == '*') {
+        handleMult();
+        curr = '1';
+    }
+    if (prevOp == 'AC') {
         textBox.innerHTML = curr;
         total = parseInt(curr);
     } else {
@@ -40,11 +70,21 @@ function handleDiv() {
         textBox.innerHTML = total;
     }
     curr = '';
-    currentOp = '/';
-    console.log(newTotal);
+    prevOp = '/';
+    console.log('total: ' + String(total));
 }
 
 function handleMult() {
+    if (prevOp == '+') { // finish previous operation
+        handleAdd();
+        curr = '1';
+    } else if (prevOp == '-') {
+        handleSub();
+        curr = '1';
+    } else if (prevOp == '/') {
+        handleDiv();
+        curr = '1';
+    }
     if (total == 0) {
         total = 1;
     }
@@ -54,22 +94,22 @@ function handleMult() {
     newTotal = total * parseInt(curr);
     total = newTotal;
     curr = '';
-    currentOp = '*';
+    prevOp = '*';
     textBox.innerHTML = total;
-    console.log(newTotal);
+    console.log('total: ' + String(total));
 }
 
 function handleEquals() {
-    if (currentOp == '+') {
+    if (prevOp == '+') {
         handleAdd();
         curr = '0';
-    } else if (currentOp == '-') {
+    } else if (prevOp == '-') {
         handleSub();
         curr = '0';
-    } else if (currentOp == '*') {
+    } else if (prevOp == '*') {
         handleMult();
         curr = '0';
-    } else if (currentOp == '/') {
+    } else if (prevOp == '/') {
         handleDiv();
         curr = '1';
     }
@@ -79,11 +119,11 @@ for (let i = 0; i < buttons.length; i++) { // b is an object
     // console.log(typeof buttons[i]);
     let b = buttons[i];
     let s = b.innerHTML
-    if (parseInt(s)) {
+    if (parseInt(s) || s == '0') {
         b.addEventListener('click', () => {
             curr += s;
             textBox.innerHTML = curr;
-            console.log(curr);
+            console.log('curr: ' + String(curr));
         });
     } else if (s == '+') {
         b.addEventListener('click', handleAdd);
@@ -97,13 +137,10 @@ for (let i = 0; i < buttons.length; i++) { // b is an object
         b.addEventListener('click', () => {
             total = 0;
             curr = '';
-            currentOp = 'AC';
+            prevOp = 'AC';
             textBox.innerHTML = total;
         });
     } else if (s == '=') {
         b.addEventListener('click', handleEquals);
     }
 }
-
-
-
